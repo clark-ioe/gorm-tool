@@ -1,0 +1,33 @@
+package main
+
+import "gorm.io/gorm"
+
+// Test struct with valid GORM tags
+type User struct {
+	ID        uint   `gorm:"primaryKey"`
+	Name      string `gorm:"column:user_name;size:100"`
+	Email     string `gorm:"uniqueIndex"`
+	CreatedAt time.Time `gorm:"autoCreateTime"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+}
+
+// Test struct with invalid GORM tags
+type Product struct {
+	ID          uint    `gorm:"primary_key"` // deprecated tag
+	Name        string  `gorm:"invalidTag"`  // unknown tag
+	Price       float64 `gorm:"column:price;type:decimal(10,2)"`
+	Description string  `gorm:"comment:'Product description'"`
+}
+
+// Test struct with duplicate column names
+type Order struct {
+	ID     uint `gorm:"column:user_id"` // duplicate column name
+	UserID uint `gorm:"column:user_id"` // same column name as above
+}
+
+// Test struct with quote issues in comments
+type Profile struct {
+	Bio   string `gorm:"comment:'User's bio'"` // unmatched single quotes
+	Notes string `gorm:"comment:\"User's \"notes\""` // unmatched double quotes
+	Info  string `gorm:"comment:'User's \"info\"'"` // mixed quotes
+}
